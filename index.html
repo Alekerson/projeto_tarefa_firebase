@@ -16,7 +16,7 @@
             <section class="row g-3 ">
 
                 <!-- Formulário de tarefas -->
-                <div class="col-md-6">
+                <div class="col-md-6 d-block" id="formCadastrar">
                     <form action="" class="row g-3">
                         <div>
                             <label for="tarefa">Nome da Tarefa</label>
@@ -39,6 +39,33 @@
 
                         <div>
                             <button type="submit" class="btn btn-primary" id="btnTarefa">Cadastrar tarefa</button>
+                        </div>
+                    </form>
+                </div>
+                 <!-- Formulário de Atualização de tarefas -->
+                 <div class="col-md-6 d-none" id="formAtualizar">
+                    <form action="" class="row g-3">
+                        <div>
+                            <label for="tarefa-update">Nome da Tarefa</label>
+                            <input type="text" name="tarefa" id="tarefa" class="form-control">
+                        </div>
+
+                        <div>
+                            <label for="data-update">Data da Tarefa</label>
+                            <input type="date" name="data-update" id="data-update" class="form-control">
+                        </div>
+
+                        <div>
+                            <label for="status-update">Status</label>
+                            <select name="status-update" id="status-update" class="form-control">
+                                <option value=""></option>
+                                <option value="concluido">Concluído</option>
+                                <option value="em aberto">Em aberto</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary" id="btnAtualizar">Atualizar Tarefa</button>
                         </div>
                     </form>
                 </div>
