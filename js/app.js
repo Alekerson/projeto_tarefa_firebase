@@ -1,5 +1,20 @@
-import { app, db } from "./config-firebase.js"
-import { doc, setDoc, collection, addDoc, query, where, getDocs, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+import {
+    app,
+    db
+} from "./config-firebase.js"
+import {
+    doc,
+    setDoc,
+    collection,
+    addDoc,
+    query,
+    where,
+    getDocs,
+    orderBy,
+    deleteDoc,
+    documentId,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
 let nome = document.querySelector("#tarefa")
 let data = document.querySelector("#data")
@@ -9,6 +24,7 @@ let bloco = document.querySelector("#bloco")
 let formCadastrar = document.querySelector("#formCadastrar")
 let formAtualizar = document.querySelector("#formAtualizar")
 let btnAtualizar = document.querySelector("#btnAtualizar")
+let idAtualizar  = ""
 
 async function inserirTarefa() {
     try {
@@ -20,14 +36,13 @@ async function inserirTarefa() {
         });
         console.log("Document written with ID: ", docRef.id);
 
-    }
-    catch (error) {
+    } catch (error) {
         console.error("Ocorreu o seguinte erro:" + error)
     }
 }
 
 async function consultarTarefa() {
-    bloco.innerHTML = ""//estamos limpando o elemento html antes de inserir novos registros, para não acular dados
+    bloco.innerHTML = "" //estamos limpando o elemento html antes de inserir novos registros, para não acular dados
     const busca = query(collection(db, "tarefa"), orderBy("name"));
 
     const resultado = await getDocs(busca);
@@ -60,11 +75,13 @@ async function consultarTarefa() {
         })
 
         document.querySelectorAll(".btn-info").forEach((elemento) => {
-            elemento.addEventListener("click", () => {
+            elemento.addEventListener("click", (evento) => {
                 if (formAtualizar.classList.contains("d-none")) {
                     formCadastrar.classList.replace("d-block", "d-none")
                     formAtualizar.classList.replace("d-none", "d-block")
                 }
+
+                consultarUnico(evento.target.id)
             })
         })
 
@@ -76,8 +93,38 @@ async function excluirTarefa(id) {
     if (resultado) {
         await deleteDoc(doc(db, "tarefa", id));
         alert("Tarefa excluída com sucesso")
-        consultarTarefa()//Recarregar os dados após excluir
+        consultarTarefa() //Recarregar os dados após excluir
     }
+}
+
+async function consultarUnico(id) {
+    idAtualizar = id //estamos passando o id do documento salvo lá no banco para a váriavel
+    const banco = await collection(db, "tarefa")
+    const busca = query(banco, where(documentId(), "==", id))
+
+    const consulta = await getDocs(busca)
+
+    console.log(consulta.docs[0].data())
+    let resultado = consulta.docs[0].data()
+
+    // Inserindo os dados no form html
+    tarefa_update.value = resultado.name
+    data_update.value = resultado.data
+    status_update.value = resultado.status
+}
+
+async function atualizarTarefa() {
+    const tarefa = doc(db, "tarefa", idAtualizar);
+
+    // Set the "capital" field of the city 'DC'
+    await updateDoc(tarefa, {
+        nome: tarefa_update.value,
+        data: data_update.value,
+        status: status_update.value
+    });
+
+    alert("Dados atualizados com sucesso")
+
 }
 
 btnTarefa.addEventListener("click", (evento) => {
@@ -87,7 +134,12 @@ btnTarefa.addEventListener("click", (evento) => {
     consultarTarefa()
 })
 
-btnAtualizar.addEventListener("click", () => {
+btnAtualizar.addEventListener("click", (evento) => {
+    evento.preventDefault()
+
+    atualizarTarefa()
+    consultarTarefa()
+
     formCadastrar.classList.replace("d-none", "d-block")
     formAtualizar.classList.replace("d-block", "d-done")
 })
