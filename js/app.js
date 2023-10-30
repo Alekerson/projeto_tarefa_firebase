@@ -24,7 +24,7 @@ let bloco = document.querySelector("#bloco")
 let formCadastrar = document.querySelector("#formCadastrar")
 let formAtualizar = document.querySelector("#formAtualizar")
 let btnAtualizar = document.querySelector("#btnAtualizar")
-let idAtualizar  = ""
+let idAtualizar = ""
 
 async function inserirTarefa() {
     try {
@@ -139,9 +139,10 @@ btnAtualizar.addEventListener("click", (evento) => {
 
     atualizarTarefa()
     consultarTarefa()
-
-    formCadastrar.classList.replace("d-none", "d-block")
-    formAtualizar.classList.replace("d-block", "d-done")
+    if (formAtualizar.classList.contains("d-block")) {
+        formCadastrar.classList.replace("d-none", "d-block")
+        formAtualizar.classList.replace("d-block", "d-none")
+    }
 })
 
 consultarTarefa()
